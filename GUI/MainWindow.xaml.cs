@@ -92,11 +92,13 @@ namespace SuperHashingPasswordGenerator
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool windowInitilized = false;
         private List<SHPGSalt> salts = new List<SHPGSalt>();
 
         public MainWindow()
         {
             InitializeComponent();
+            windowInitilized = true;
             var versioninfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
             this.Title = this.statusTextBlock.Text = "SHPG by logchan ver " + String.Format("{0}.{1}", versioninfo.ProductMajorPart, versioninfo.ProductMinorPart);
 
@@ -162,7 +164,7 @@ namespace SuperHashingPasswordGenerator
                 return;
             }
 
-            HashingPasswordGenerator hpg = new HashingPasswordGenerator(new MD5Hasher(), new DoNothingPostHashing());
+            HashingPasswordGenerator hpg = new HashingPasswordGenerator(new MD5Hasher(), new MixUpperLowerCasePostHashing());
 
             foreach (SHPGSalt salt in salts)
             {
@@ -175,7 +177,8 @@ namespace SuperHashingPasswordGenerator
             hpg.DoHashing(secretBox.Password, out hash, out posthash);
 
             this.hashingResultBox.Text = hash;
-            this.hashingResultUpperCasedBox.Text = posthash.ToUpper();
+            this.hashingResultUpperCasedBox.Text = hash.ToUpper();
+            this.hashingResultMixedCasedBox.Text = posthash;
 
             SetStatus(String.Format("Hashed {0} time(s) successfully.", hashingcount), Colors.Green);
         }
@@ -199,6 +202,71 @@ namespace SuperHashingPasswordGenerator
         private void importSaltsButton_Click(object sender, RoutedEventArgs e)
         {
             ShowFeatureUnavailableMessageBox();
+        }
+
+        private void CopyHashWithNotification(TextBox textBox)
+        {
+            if (CopyHash(textBox, 0, textBox.Text.Length))
+            {
+                MessageBox.Show("Hash copied to clipboard.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Failed to copy hash to clipboard.", "Success", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// copy a segment of hashing result to clipboard
+        /// </summary>
+        /// <param name="textBox">the TextBox containing the hashing result</param>
+        /// <param name="startIndex">start index</param>
+        /// <param name="length">length</param>
+        /// <returns></returns>
+        private bool CopyHash(TextBox textBox, int startIndex, int length)
+        {
+            try
+            {
+                Clipboard.SetDataObject(textBox.Text.Substring(startIndex, length), true);
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
+
+        private void copyResultButton_Click(object sender, RoutedEventArgs e)
+        {
+            CopyHashWithNotification(hashingResultBox);
+        }
+
+        private void copyUpperResultButton_Click(object sender, RoutedEventArgs e)
+        {
+            CopyHashWithNotification(hashingResultUpperCasedBox);
+        }
+
+        private void copyMixedResultButton_Click(object sender, RoutedEventArgs e)
+        {
+            CopyHashWithNotification(hashingResultMixedCasedBox);
+        }
+
+        private void hideHashButton_Checked(object sender, RoutedEventArgs e)
+        {
+            // I know this is stupid, haha
+            if (!windowInitilized) return;
+            this.hashingResultBox.Background = Brushes.Black;
+            this.hashingResultUpperCasedBox.Background = Brushes.Black;
+            this.hashingResultMixedCasedBox.Background = Brushes.Black;
+        }
+
+        private void showHashButton_Checked(object sender, RoutedEventArgs e)
+        {
+            // yeah, this is also stupid
+            if (!windowInitilized) return;
+            this.hashingResultBox.Background = Brushes.White;
+            this.hashingResultUpperCasedBox.Background = Brushes.White;
+            this.hashingResultMixedCasedBox.Background = Brushes.White;
         }
 
     }

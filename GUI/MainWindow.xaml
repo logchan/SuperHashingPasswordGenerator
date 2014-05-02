@@ -1,7 +1,7 @@
 ﻿<Window x:Class="SuperHashingPasswordGenerator.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Super Hashing Password Generator" Height="594" Width="586" MinHeight="594" MinWidth="586">
+        Title="Super Hashing Password Generator" Height="642" Width="594" MinHeight="594" MinWidth="586">
     <Window.Resources>
         <Style x:Key="frameworkElementStyleBase" TargetType="{x:Type FrameworkElement}">
             <Setter Property="Margin" Value="5 5 5 2"></Setter>
@@ -38,23 +38,45 @@
                         <Button Name="exportSaltsButton" Click="exportSaltsButton_Click">Export the salts</Button>
                         <Button Name="importSaltsButton" Click="importSaltsButton_Click">Import salts from file</Button>
                     </StackPanel>
+                    
                     <TextBlock>How many times to hash:</TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <RadioButton GroupName="RadioTimesToHash" Name="hashFixedNumberRadio" IsChecked="True">Give a number (between 1 and 100):</RadioButton>
                         <TextBox Name="hashingTimesBox" Width="100">1</TextBox>
                     </StackPanel>
+                    
                     <StackPanel Orientation="Horizontal">
                         <RadioButton GroupName="RadioTimesToHash" Name="hashAccordingToStringLength">Calculate the length of a string:</RadioButton>
                         <TextBox Name="stringLengthToCalculateBox" Width="150"></TextBox>
                         <TextBlock>, and divide it by:</TextBlock>
                         <TextBox Name="stringLengthDivisor" Width="50">1</TextBox>
                     </StackPanel>
+                    
+                    <StackPanel Margin="5 10 5 5" Orientation="Horizontal" Background="#FFECECEC">
+                        <TextBlock>Result Options:</TextBlock>
+                        <RadioButton GroupName="RadioShowHideHash" Name="showHashButton" IsChecked="True" Checked="showHashButton_Checked">Show hashing results</RadioButton>
+                        <RadioButton GroupName="RadioShowHideHash" Name="hideHashButton" Checked="hideHashButton_Checked">Hide hashing results</RadioButton>
+                    </StackPanel>
+                    
                     <Button Name="doHashButton" Click="doHashButton_Click">Do the hashing!</Button>
-                    <TextBlock>Hashing result:</TextBlock>
-                    <TextBox Name="hashingResultBox" FontFamily="Consolas"></TextBox>
-                    <TextBlock>Upper cased hashing result:</TextBlock>
-                    <TextBox Name="hashingResultUpperCasedBox" FontFamily="Consolas"></TextBox>
-                    <TextBlock></TextBlock>
+                    
+                    <StackPanel Orientation="Horizontal">
+                        <Button Name="copyResultButton" Click="copyResultButton_Click">Copy</Button>
+                        <TextBlock>Hashing result:</TextBlock>
+                    </StackPanel>
+                    <TextBox x:Name="hashingResultBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Name="copyUpperResultButton" Click="copyUpperResultButton_Click">Copy</Button>
+                        <TextBlock>Upper cased hashing result:</TextBlock>
+                    </StackPanel>
+                    <TextBox Name="hashingResultUpperCasedBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"></TextBox>
+                    
+                    <StackPanel Orientation="Horizontal">
+                        <Button Name="copyMixedResultButton" Click="copyMixedResultButton_Click">Copy</Button>
+                        <TextBlock>Mixed upper case and lower case result:</TextBlock>
+                    </StackPanel>
+                    <TextBox Name="hashingResultMixedCasedBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"></TextBox>
                 </StackPanel>
                 <DataGrid Name="saltDataGrid" DockPanel.Dock="Top" ItemsSource="{Binding}" AutoGenerateColumns="False">
                     <DataGrid.Columns>
