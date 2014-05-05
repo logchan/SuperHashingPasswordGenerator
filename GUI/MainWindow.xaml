@@ -61,19 +61,28 @@
                     <Button Name="doHashButton" Click="doHashButton_Click">Do the hashing!</Button>
                     
                     <StackPanel Orientation="Horizontal">
-                        <Button Name="copyResultButton" Click="copyResultButton_Click">Copy</Button>
+                        <Button Name="copyResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
+                        <Button Name="copyResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
+                        <Button Name="copyResultM16Button" Click="copyHashingResultButtonHandler">Middle 16</Button>
+                        <Button Name="copyResultL16Button" Click="copyHashingResultButtonHandler">Last 16</Button>
                         <TextBlock>Hashing result:</TextBlock>
                     </StackPanel>
                     <TextBox x:Name="hashingResultBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"/>
 
                     <StackPanel Orientation="Horizontal">
-                        <Button Name="copyUpperResultButton" Click="copyUpperResultButton_Click">Copy</Button>
+                        <Button Name="copyUpperResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
+                        <Button Name="copyUpperResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
+                        <Button Name="copyUpperResultM16Button" Click="copyHashingResultButtonHandler">Middle 16</Button>
+                        <Button Name="copyUpperResultL16Button" Click="copyHashingResultButtonHandler">Last 16</Button>
                         <TextBlock>Upper cased hashing result:</TextBlock>
                     </StackPanel>
                     <TextBox Name="hashingResultUpperCasedBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"></TextBox>
                     
                     <StackPanel Orientation="Horizontal">
-                        <Button Name="copyMixedResultButton" Click="copyMixedResultButton_Click">Copy</Button>
+                        <Button Name="copyMixedResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
+                        <Button Name="copyMixedResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
+                        <Button Name="copyMixedResultM16Button" Click="copyHashingResultButtonHandler">Middle 16</Button>
+                        <Button Name="copyMixedResultL16Button" Click="copyHashingResultButtonHandler">Last 16</Button>
                         <TextBlock>Mixed upper case and lower case result:</TextBlock>
                     </StackPanel>
                     <TextBox Name="hashingResultMixedCasedBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"></TextBox>

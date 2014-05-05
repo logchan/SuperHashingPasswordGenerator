@@ -204,15 +204,25 @@ namespace SuperHashingPasswordGenerator
             ShowFeatureUnavailableMessageBox();
         }
 
-        private void CopyHashWithNotification(TextBox textBox)
+        private void CopyHashWithNotification(TextBox textBox, int start = 0, int length = 0)
         {
-            if (CopyHash(textBox, 0, textBox.Text.Length))
+            if (length <= 0) length = textBox.Text.Length;
+            else if (start + length > textBox.Text.Length)
+            {
+                MessageBox.Show("Hash copy failed: requiring longer text than hashing result");
+                return;
+            }
+
+            textBox.Focus();
+            textBox.Select(start, length);
+
+            if (CopyHash(textBox, start, length))
             {
                 MessageBox.Show("Hash copied to clipboard.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
-                MessageBox.Show("Failed to copy hash to clipboard.", "Success", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Failed to copy hash to clipboard." + Environment.NewLine + "(Luckily, I have selected the hash for you, just use Ctrl+C)", "Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -230,25 +240,61 @@ namespace SuperHashingPasswordGenerator
                 Clipboard.SetDataObject(textBox.Text.Substring(startIndex, length), true);
                 return true;
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.Message);
                 return false;
             }
         }
 
-        private void copyResultButton_Click(object sender, RoutedEventArgs e)
+        private void copyHashingResultButtonHandler(object sender, RoutedEventArgs e)
         {
-            CopyHashWithNotification(hashingResultBox);
-        }
-
-        private void copyUpperResultButton_Click(object sender, RoutedEventArgs e)
-        {
-            CopyHashWithNotification(hashingResultUpperCasedBox);
-        }
-
-        private void copyMixedResultButton_Click(object sender, RoutedEventArgs e)
-        {
-            CopyHashWithNotification(hashingResultMixedCasedBox);
+            FrameworkElement fe = (FrameworkElement)sender;
+            switch(fe.Name)
+            {
+                // All
+                case "copyResultButton":
+                    CopyHashWithNotification(hashingResultBox);
+                    break;
+                case "copyUpperResultButton":
+                    CopyHashWithNotification(hashingResultUpperCasedBox);
+                    break;
+                case "copyMixedResultButton":
+                    CopyHashWithNotification(hashingResultMixedCasedBox);
+                    break;
+                // Front 16
+                case "copyResultF16Button":
+                    CopyHashWithNotification(hashingResultBox, 0, 16);
+                    break;
+                case "copyUpperResultF16Button":
+                    CopyHashWithNotification(hashingResultUpperCasedBox, 0, 16);
+                    break;
+                case "copyMixedResultF16Button":
+                    CopyHashWithNotification(hashingResultMixedCasedBox, 0, 16);
+                    break;
+                // Middle 16
+                case "copyResultM16Button":
+                    CopyHashWithNotification(hashingResultBox, 8, 16);
+                    break;
+                case "copyUpperResultM16Button":
+                    CopyHashWithNotification(hashingResultUpperCasedBox, 8, 16);
+                    break;
+                case "copyMixedResultM16Button":
+                    CopyHashWithNotification(hashingResultMixedCasedBox, 8, 16);
+                    break;
+                // Last 16
+                case "copyResultL16Button":
+                    CopyHashWithNotification(hashingResultBox, 16, 16);
+                    break;
+                case "copyUpperResultL16Button":
+                    CopyHashWithNotification(hashingResultUpperCasedBox, 16, 16);
+                    break;
+                case "copyMixedResultL16Button":
+                    CopyHashWithNotification(hashingResultMixedCasedBox, 16, 16);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void hideHashButton_Checked(object sender, RoutedEventArgs e)
