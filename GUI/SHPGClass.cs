@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+ * SHPGClass.cs
+ * 
+ * lgchan, 2014
+ * 
+ * Some classes for super hashing password generator
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
