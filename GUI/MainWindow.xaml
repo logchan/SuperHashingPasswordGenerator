@@ -38,54 +38,98 @@
                         <Button Name="exportSaltsButton" Click="exportSaltsButton_Click">Export the salts</Button>
                         <Button Name="importSaltsButton" Click="importSaltsButton_Click">Import salts from file</Button>
                     </StackPanel>
-                    
+
                     <TextBlock>How many times to hash:</TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <RadioButton GroupName="RadioTimesToHash" Name="hashFixedNumberRadio" IsChecked="True">Give a number (between 1 and 100):</RadioButton>
                         <TextBox Name="hashingTimesBox" Width="100">1</TextBox>
                     </StackPanel>
-                    
+
                     <StackPanel Orientation="Horizontal">
                         <RadioButton GroupName="RadioTimesToHash" Name="hashAccordingToStringLength">Calculate the length of a string:</RadioButton>
                         <TextBox Name="stringLengthToCalculateBox" Width="150"></TextBox>
                         <TextBlock>, and divide it by:</TextBlock>
                         <TextBox Name="stringLengthDivisor" Width="50">1</TextBox>
                     </StackPanel>
-                    
+
                     <StackPanel Margin="5 10 5 5" Orientation="Horizontal" Background="#FFECECEC">
                         <TextBlock>Result Options:</TextBlock>
                         <RadioButton GroupName="RadioShowHideHash" Name="showHashButton" IsChecked="True" Checked="showHashButton_Checked">Show hashing results</RadioButton>
                         <RadioButton GroupName="RadioShowHideHash" Name="hideHashButton" Checked="hideHashButton_Checked">Hide hashing results</RadioButton>
                     </StackPanel>
-                    
-                    <Button Name="doHashButton" Click="doHashButton_Click">Do the hashing!</Button>
-                    
-                    <StackPanel Orientation="Horizontal">
-                        <Button Name="copyResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
-                        <Button Name="copyResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
-                        <Button Name="copyResultM16Button" Click="copyHashingResultButtonHandler">Middle 16</Button>
-                        <Button Name="copyResultL16Button" Click="copyHashingResultButtonHandler">Last 16</Button>
-                        <TextBlock>Hashing result:</TextBlock>
-                    </StackPanel>
-                    <TextBox x:Name="hashingResultBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"/>
 
-                    <StackPanel Orientation="Horizontal">
-                        <Button Name="copyUpperResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
-                        <Button Name="copyUpperResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
-                        <Button Name="copyUpperResultM16Button" Click="copyHashingResultButtonHandler">Middle 16</Button>
-                        <Button Name="copyUpperResultL16Button" Click="copyHashingResultButtonHandler">Last 16</Button>
-                        <TextBlock>Upper cased hashing result:</TextBlock>
+                    <Button Name="doHashButton" Click="doHashButton_Click">Do the hashing!</Button>
+                    <StackPanel Name="HashingResultArea">
+                        <!-- Beautiful grouping background for hashing results -->
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource controlStyleBase}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Border Name="Border" CornerRadius="2"  Padding="2" BorderThickness="1">
+                                                <Border.Background>
+                                                    <SolidColorBrush Color="White" />
+                                                </Border.Background>
+                                                <Border.BorderBrush>
+                                                    <SolidColorBrush Color="#FF888888" />
+                                                </Border.BorderBrush>
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="CommonStates">
+                                                        <VisualState x:Name="Normal" />
+                                                        <VisualState x:Name="Disabled"/>
+                                                        <VisualState x:Name="ReadOnly" />
+                                                        <VisualState x:Name="MouseOver" />
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
+                                                <ScrollViewer Margin="0" x:Name="PART_ContentHost">
+                                                    <ScrollViewer.Background>
+                                                        <VisualBrush Stretch="None" AlignmentX="Left" AlignmentY="Top">
+                                                            <VisualBrush.Visual>
+                                                                <Canvas>
+                                                                    <!-- Rectangles, width and left are magic numbers -->
+                                                                    <Rectangle Canvas.Top="0" Canvas.Left="0" Width="68" Height="20" Fill="White"></Rectangle>
+                                                                    <Rectangle Canvas.Top="0" Canvas.Left="68" Width="66" Height="20" Fill="LightGray"></Rectangle>
+                                                                    <Rectangle Canvas.Top="0" Canvas.Left="200" Width="66" Height="20" Fill="LightGray"></Rectangle>
+                                                                </Canvas>
+                                                            </VisualBrush.Visual>
+                                                        </VisualBrush>
+                                                    </ScrollViewer.Background>
+                                                </ScrollViewer>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Name="copyResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
+                            <Button Name="copyResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
+                            <Button Name="copyResultM16Button" Click="copyHashingResultButtonHandler">Middle 16</Button>
+                            <Button Name="copyResultL16Button" Click="copyHashingResultButtonHandler">Last 16</Button>
+                            <TextBlock>Hashing result:</TextBlock>
+                        </StackPanel>
+                        <TextBox x:Name="hashingResultBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Name="copyUpperResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
+                            <Button Name="copyUpperResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
+                            <Button Name="copyUpperResultM16Button" Click="copyHashingResultButtonHandler">Middle 16</Button>
+                            <Button Name="copyUpperResultL16Button" Click="copyHashingResultButtonHandler">Last 16</Button>
+                            <TextBlock>Upper cased hashing result:</TextBlock>
+                        </StackPanel>
+                        <TextBox Name="hashingResultUpperCasedBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"></TextBox>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Name="copyMixedResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
+                            <Button Name="copyMixedResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
+                            <Button Name="copyMixedResultM16Button" Click="copyHashingResultButtonHandler">Middle 16</Button>
+                            <Button Name="copyMixedResultL16Button" Click="copyHashingResultButtonHandler">Last 16</Button>
+                            <TextBlock>Mixed upper case and lower case result:</TextBlock>
+                        </StackPanel>
+                        <TextBox Name="hashingResultMixedCasedBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"></TextBox>
                     </StackPanel>
-                    <TextBox Name="hashingResultUpperCasedBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"></TextBox>
-                    
-                    <StackPanel Orientation="Horizontal">
-                        <Button Name="copyMixedResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
-                        <Button Name="copyMixedResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
-                        <Button Name="copyMixedResultM16Button" Click="copyHashingResultButtonHandler">Middle 16</Button>
-                        <Button Name="copyMixedResultL16Button" Click="copyHashingResultButtonHandler">Last 16</Button>
-                        <TextBlock>Mixed upper case and lower case result:</TextBlock>
-                    </StackPanel>
-                    <TextBox Name="hashingResultMixedCasedBox" FontFamily="Consolas" Text="0123456789abcdef0123456789abcdef"></TextBox>
+
                 </StackPanel>
                 <DataGrid Name="saltDataGrid" DockPanel.Dock="Top" ItemsSource="{Binding}" AutoGenerateColumns="False">
                     <DataGrid.Columns>

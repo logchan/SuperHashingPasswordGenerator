@@ -48,46 +48,6 @@ namespace SuperHashingPasswordGenerator
 {
 
     /// <summary>
-    /// my salt wrapper
-    /// </summary>
-    public class SHPGSalt
-    {
-        public string Alias { get; set; }
-        public string SaltString { get; set; }
-        public bool OnceOnly { get; set; }
-
-        public SHPGSalt()
-        {
-            this.Alias = "";
-            this.SaltString = "";
-            this.OnceOnly = false;
-        }
-
-        public SHPGSalt(string alias, string salt, bool once)
-        {
-            this.Alias = alias;
-            this.SaltString = salt;
-            this.OnceOnly = once;
-        }
-
-        public SimpleSaltAppender GetSaltAppender()
-        {
-            return new SimpleSaltAppender(this.SaltString, this.OnceOnly);
-        }
-    }
-
-    public class SHPGSalts : List<SHPGSalt>
-    {
-        public SHPGSalts()
-        {
-        }
-        public new void Add(SHPGSalt salt)
-        {
-            base.Add(salt);
-        }
-    }
-
-    /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : Window
@@ -106,42 +66,96 @@ namespace SuperHashingPasswordGenerator
             this.saltDataGrid.DataContext = salts;
         }
 
+        /***** Event handlers *****/
+
         private void doHashButton_Click(object sender, RoutedEventArgs e)
         {
             ProceedHashing();
         }
 
-        private bool GetHashingCount(out int hashingCount)
+        private void exportSaltsButton_Click(object sender, RoutedEventArgs e)
         {
-            hashingCount = 0;
-            if (hashFixedNumberRadio.IsChecked.HasValue && hashFixedNumberRadio.IsChecked.Value)
-            {
-                return Int32.TryParse(this.hashingTimesBox.Text, out hashingCount);
-            }
-            else
-            {
-                int strlen = this.stringLengthToCalculateBox.Text.Length;
+            ShowFeatureUnavailableMessageBox();
+        }
 
-                int div = 1;
-                if (Int32.TryParse(this.stringLengthDivisor.Text, out div))
-                {
-                    if (div >= 1)
-                    {
-                        hashingCount = strlen / div;
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
+        private void importSaltsButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowFeatureUnavailableMessageBox();
+        }
+
+        private void copyHashingResultButtonHandler(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement fe = (FrameworkElement)sender;
+            switch(fe.Name)
+            {
+                // Copy All
+                case "copyResultButton":
+                    CopyHashWithSelectionAndNotification(hashingResultBox);
+                    break;
+                case "copyUpperResultButton":
+                    CopyHashWithSelectionAndNotification(hashingResultUpperCasedBox);
+                    break;
+                case "copyMixedResultButton":
+                    CopyHashWithSelectionAndNotification(hashingResultMixedCasedBox);
+                    break;
+                // Front 16
+                case "copyResultF16Button":
+                    CopyHashWithSelectionAndNotification(hashingResultBox, 0, 16);
+                    break;
+                case "copyUpperResultF16Button":
+                    CopyHashWithSelectionAndNotification(hashingResultUpperCasedBox, 0, 16);
+                    break;
+                case "copyMixedResultF16Button":
+                    CopyHashWithSelectionAndNotification(hashingResultMixedCasedBox, 0, 16);
+                    break;
+                // Middle 16
+                case "copyResultM16Button":
+                    CopyHashWithSelectionAndNotification(hashingResultBox, 8, 16);
+                    break;
+                case "copyUpperResultM16Button":
+                    CopyHashWithSelectionAndNotification(hashingResultUpperCasedBox, 8, 16);
+                    break;
+                case "copyMixedResultM16Button":
+                    CopyHashWithSelectionAndNotification(hashingResultMixedCasedBox, 8, 16);
+                    break;
+                // Last 16
+                case "copyResultL16Button":
+                    CopyHashWithSelectionAndNotification(hashingResultBox, 16, 16);
+                    break;
+                case "copyUpperResultL16Button":
+                    CopyHashWithSelectionAndNotification(hashingResultUpperCasedBox, 16, 16);
+                    break;
+                case "copyMixedResultL16Button":
+                    CopyHashWithSelectionAndNotification(hashingResultMixedCasedBox, 16, 16);
+                    break;
+                default:
+                    break;
             }
         }
 
+        private void hideHashButton_Checked(object sender, RoutedEventArgs e)
+        {
+            // I know this is stupid, haha
+            if (!windowInitilized) return;
+            this.hashingResultBox.Background = Brushes.Black;
+            this.hashingResultUpperCasedBox.Background = Brushes.Black;
+            this.hashingResultMixedCasedBox.Background = Brushes.Black;
+        }
+
+        private void showHashButton_Checked(object sender, RoutedEventArgs e)
+        {
+            // yeah, this is also stupid
+            if (!windowInitilized) return;
+            this.hashingResultBox.Background = Brushes.White;
+            this.hashingResultUpperCasedBox.Background = Brushes.White;
+            this.hashingResultMixedCasedBox.Background = Brushes.White;
+        }
+
+        /***** Helper Functions *****/
+
+        /// <summary>
+        /// Gather information and do the hashing
+        /// </summary>
         private void ProceedHashing()
         {
             // check hashing count
@@ -183,28 +197,52 @@ namespace SuperHashingPasswordGenerator
             SetStatus(String.Format("Hashed {0} time(s) successfully.", hashingcount), Colors.Green);
         }
 
-        private void ShowFeatureUnavailableMessageBox()
+        /// <summary>
+        /// Get the hashing count input by user
+        /// </summary>
+        /// <param name="hashingCount">the total number of times of hashing</param>
+        /// <returns>true if success, false if failed</returns>
+        private bool GetHashingCount(out int hashingCount)
         {
-            MessageBox.Show("Sorry, this feature will be added in the future.\n(It's done when it's done.)", "Feature Unavailable", MessageBoxButton.OK, MessageBoxImage.Information);
+            hashingCount = 0;
+            // check which kind of hashing count is selected
+            if (hashFixedNumberRadio.IsChecked.HasValue && hashFixedNumberRadio.IsChecked.Value)
+            {
+                // give a number
+                return Int32.TryParse(this.hashingTimesBox.Text, out hashingCount);
+            }
+            else
+            {
+                // calculate the length of string, 
+                int strlen = this.stringLengthToCalculateBox.Text.Length;
+                // and then divide it by some integer
+                int div = 1;
+                if (Int32.TryParse(this.stringLengthDivisor.Text, out div))
+                {
+                    if (div >= 1)
+                    {
+                        hashingCount = strlen / div;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
-        private void SetStatus(String text, Color color)
-        {
-            this.statusTextBlock.Text = text;
-            this.statusTextBlock.Foreground = new SolidColorBrush(color);
-        }
-
-        private void exportSaltsButton_Click(object sender, RoutedEventArgs e)
-        {
-            ShowFeatureUnavailableMessageBox();
-        }
-
-        private void importSaltsButton_Click(object sender, RoutedEventArgs e)
-        {
-            ShowFeatureUnavailableMessageBox();
-        }
-
-        private void CopyHashWithNotification(TextBox textBox, int start = 0, int length = 0)
+        /// <summary>
+        /// Wrapper of CopyHash. Add value check, notification (with messagebox), and select the copied text
+        /// </summary>
+        /// <param name="textBox">the TextBox containing the hashing result</param>
+        /// <param name="start">start index</param>
+        /// <param name="length">length</param>
+        private void CopyHashWithSelectionAndNotification(TextBox textBox, int start = 0, int length = 0)
         {
             if (length <= 0) length = textBox.Text.Length;
             else if (start + length > textBox.Text.Length)
@@ -227,12 +265,31 @@ namespace SuperHashingPasswordGenerator
         }
 
         /// <summary>
+        /// Show a messagebox to tell the user that the feature is not yet available
+        /// </summary>
+        private void ShowFeatureUnavailableMessageBox()
+        {
+            MessageBox.Show("Sorry, this feature will be added in the future.\n(It's done when it's done.)", "Feature Unavailable", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        /// <summary>
+        /// Set the status textblock
+        /// </summary>
+        /// <param name="text">The text of the status</param>
+        /// <param name="color">The color of the text</param>
+        private void SetStatus(String text, Color color)
+        {
+            this.statusTextBlock.Text = text;
+            this.statusTextBlock.Foreground = new SolidColorBrush(color);
+        }
+
+        /// <summary>
         /// copy a segment of hashing result to clipboard
         /// </summary>
         /// <param name="textBox">the TextBox containing the hashing result</param>
         /// <param name="startIndex">start index</param>
         /// <param name="length">length</param>
-        /// <returns></returns>
+        /// <returns>true if succeeded</returns>
         private bool CopyHash(TextBox textBox, int startIndex, int length)
         {
             try
@@ -240,80 +297,11 @@ namespace SuperHashingPasswordGenerator
                 Clipboard.SetDataObject(textBox.Text.Substring(startIndex, length), true);
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 return false;
             }
         }
-
-        private void copyHashingResultButtonHandler(object sender, RoutedEventArgs e)
-        {
-            FrameworkElement fe = (FrameworkElement)sender;
-            switch(fe.Name)
-            {
-                // All
-                case "copyResultButton":
-                    CopyHashWithNotification(hashingResultBox);
-                    break;
-                case "copyUpperResultButton":
-                    CopyHashWithNotification(hashingResultUpperCasedBox);
-                    break;
-                case "copyMixedResultButton":
-                    CopyHashWithNotification(hashingResultMixedCasedBox);
-                    break;
-                // Front 16
-                case "copyResultF16Button":
-                    CopyHashWithNotification(hashingResultBox, 0, 16);
-                    break;
-                case "copyUpperResultF16Button":
-                    CopyHashWithNotification(hashingResultUpperCasedBox, 0, 16);
-                    break;
-                case "copyMixedResultF16Button":
-                    CopyHashWithNotification(hashingResultMixedCasedBox, 0, 16);
-                    break;
-                // Middle 16
-                case "copyResultM16Button":
-                    CopyHashWithNotification(hashingResultBox, 8, 16);
-                    break;
-                case "copyUpperResultM16Button":
-                    CopyHashWithNotification(hashingResultUpperCasedBox, 8, 16);
-                    break;
-                case "copyMixedResultM16Button":
-                    CopyHashWithNotification(hashingResultMixedCasedBox, 8, 16);
-                    break;
-                // Last 16
-                case "copyResultL16Button":
-                    CopyHashWithNotification(hashingResultBox, 16, 16);
-                    break;
-                case "copyUpperResultL16Button":
-                    CopyHashWithNotification(hashingResultUpperCasedBox, 16, 16);
-                    break;
-                case "copyMixedResultL16Button":
-                    CopyHashWithNotification(hashingResultMixedCasedBox, 16, 16);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void hideHashButton_Checked(object sender, RoutedEventArgs e)
-        {
-            // I know this is stupid, haha
-            if (!windowInitilized) return;
-            this.hashingResultBox.Background = Brushes.Black;
-            this.hashingResultUpperCasedBox.Background = Brushes.Black;
-            this.hashingResultMixedCasedBox.Background = Brushes.Black;
-        }
-
-        private void showHashButton_Checked(object sender, RoutedEventArgs e)
-        {
-            // yeah, this is also stupid
-            if (!windowInitilized) return;
-            this.hashingResultBox.Background = Brushes.White;
-            this.hashingResultUpperCasedBox.Background = Brushes.White;
-            this.hashingResultMixedCasedBox.Background = Brushes.White;
-        }
-
     }
 }
