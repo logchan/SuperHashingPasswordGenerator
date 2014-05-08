@@ -126,9 +126,9 @@ namespace SuperHashingPasswordGenerator
         {
             // yeah, this is also stupid
             if (!windowInitilized) return;
-            this.hashingResultBox.Background = Brushes.White;
-            this.hashingResultUpperCasedBox.Background = Brushes.White;
-            this.hashingResultMixedCasedBox.Background = Brushes.White;
+            this.hashingResultBox.Background = (VisualBrush)this.FindResource("hashingGroupingBackground");
+            this.hashingResultUpperCasedBox.Background = (VisualBrush)this.FindResource("hashingGroupingBackground");
+            this.hashingResultMixedCasedBox.Background = (VisualBrush)this.FindResource("hashingGroupingBackground");
         }
 
         /***** Helper Functions *****/

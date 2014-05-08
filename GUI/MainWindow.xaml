@@ -19,6 +19,15 @@
         <Style TargetType="{x:Type DataGrid}" BasedOn="{StaticResource controlStyleBase}"></Style>
         <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource controlStyleBase}"></Style>
         <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource controlStyleBase}"></Style>
+        <VisualBrush x:Key="hashingGroupingBackground" Stretch="None" AlignmentX="Left" AlignmentY="Top">
+            <VisualBrush.Visual>
+                <Canvas>
+                    <Rectangle Canvas.Top="0" Canvas.Left="0" Width="68" Height="20" Fill="White"></Rectangle>
+                    <Rectangle Canvas.Top="0" Canvas.Left="68" Width="66" Height="20" Fill="LightGray"></Rectangle>
+                    <Rectangle Canvas.Top="0" Canvas.Left="200" Width="66" Height="20" Fill="LightGray"></Rectangle>
+                </Canvas>
+            </VisualBrush.Visual>
+        </VisualBrush>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -60,48 +69,13 @@
 
                     <Button Name="doHashButton" Click="doHashButton_Click">Do the hashing!</Button>
                     <StackPanel Name="HashingResultArea">
-                        <!-- Beautiful grouping background for hashing results -->
+
                         <StackPanel.Resources>
                             <Style TargetType="TextBox" BasedOn="{StaticResource controlStyleBase}">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="TextBox">
-                                            <Border Name="Border" CornerRadius="2"  Padding="2" BorderThickness="1">
-                                                <Border.Background>
-                                                    <SolidColorBrush Color="White" />
-                                                </Border.Background>
-                                                <Border.BorderBrush>
-                                                    <SolidColorBrush Color="#FF888888" />
-                                                </Border.BorderBrush>
-                                                <VisualStateManager.VisualStateGroups>
-                                                    <VisualStateGroup x:Name="CommonStates">
-                                                        <VisualState x:Name="Normal" />
-                                                        <VisualState x:Name="Disabled"/>
-                                                        <VisualState x:Name="ReadOnly" />
-                                                        <VisualState x:Name="MouseOver" />
-                                                    </VisualStateGroup>
-                                                </VisualStateManager.VisualStateGroups>
-                                                <ScrollViewer Margin="0" x:Name="PART_ContentHost">
-                                                    <ScrollViewer.Background>
-                                                        <VisualBrush Stretch="None" AlignmentX="Left" AlignmentY="Top">
-                                                            <VisualBrush.Visual>
-                                                                <Canvas>
-                                                                    <!-- Rectangles, width and left are magic numbers -->
-                                                                    <Rectangle Canvas.Top="0" Canvas.Left="0" Width="68" Height="20" Fill="White"></Rectangle>
-                                                                    <Rectangle Canvas.Top="0" Canvas.Left="68" Width="66" Height="20" Fill="LightGray"></Rectangle>
-                                                                    <Rectangle Canvas.Top="0" Canvas.Left="200" Width="66" Height="20" Fill="LightGray"></Rectangle>
-                                                                </Canvas>
-                                                            </VisualBrush.Visual>
-                                                        </VisualBrush>
-                                                    </ScrollViewer.Background>
-                                                </ScrollViewer>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
+                                <Setter Property="Background" Value="{StaticResource ResourceKey=hashingGroupingBackground}"></Setter>
                             </Style>
                         </StackPanel.Resources>
-
+                        
                         <StackPanel Orientation="Horizontal">
                             <Button Name="copyResultButton" Click="copyHashingResultButtonHandler">Copy</Button>
                             <Button Name="copyResultF16Button" Click="copyHashingResultButtonHandler">First 16</Button>
